@@ -68,7 +68,6 @@ class ShipmentModelViewSet(viewsets.ModelViewSet):
     queryset = Shipment.objects.all()
     serializer_class = ShipmentSerializer
     filter_backends = [DjangoFilterBackend]
-    #filterset_fields = []
 
     def get_permissions(self):
         if self.action in ['list', 'create']:
