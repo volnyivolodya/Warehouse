@@ -12,7 +12,6 @@ router.register('shipment', ShipmentModelViewSet)
 
 
 urlpatterns = [
-    #path('logout/', views.logout_view, name='logout'),
     path('logout/', logout_view, name='logout'),
 ]
 

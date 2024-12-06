@@ -12,19 +12,49 @@ from api.serializers import ClientSerializer, WarehouseSerializer, ProductSerial
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
+    """
+    Выход пользователя из системы.
+
+    Метод: POST
+
+    Разрешения: Только аутентифицированные пользователи.
+    """
     logout(request)
     return Response({"detail": "Successfully logged out."}, status=status.HTTP_200_OK)
 
+
 class IsSeller(BasePermission):
+    """
+    Разрешение для продавцов.
+
+    Проверяет, является ли пользователь аутентифицированным и принадлежит ли он к группе "seller".
+    """
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.group == 'seller'
 
+
 class IsBuyer(BasePermission):
+    """
+    Разрешение для покупателей.
+
+    Проверяет, является ли пользователь аутентифицированным и принадлежит ли он к группе "buyer".
+    """
+
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.group == 'buyer'
 
 
 class ClientModelViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet для управления клиентами (ApiUser).
+
+    Методы: POST, GET
+
+    Разрешения: Открыты для всех.
+
+    Поля: queryset, http_method_names, serializer_class, authentication_classes, permission_classes
+    """
     queryset = ApiUser.objects.all()
     http_method_names = ['post', 'get']
     serializer_class = ClientSerializer
@@ -32,7 +62,17 @@ class ClientModelViewSet(viewsets.ModelViewSet):
     authentication_classes = []
     permission_classes = []
 
+
 class WarehouseModelViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet для создания склада (Warehouse).
+
+    Методы: CREATE, UPDATE, PARTIAL_UPDATE, DESTROY
+
+    Разрешения: Открыты для всех.
+
+    Поля: queryset, serializer_class.
+    """
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
 
@@ -49,7 +89,17 @@ class WarehouseModelViewSet(viewsets.ModelViewSet):
             ProductSerializer(free_products, many=True).data
         )
 
+
 class ProductModelViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet для создания продукта(Product).
+
+    Методы: CREATE, UPDATE, PARTIAL_UPDATE, DESTROY
+
+    Разрешения: Открыты для всех.
+
+    Поля: queryset, serializer_class.
+    """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -64,11 +114,20 @@ class ProductModelViewSet(viewsets.ModelViewSet):
             return [IsSeller()]
         return [IsAuthenticated()]
 
+
 class ShipmentModelViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet для создания отгрузки(Shipment).
+
+    Методы: CREATE
+
+    Разрешения: Открыты для всех.
+
+    Поля: queryset, serializer_class, filter_backends.
+    """
     queryset = Shipment.objects.all()
     serializer_class = ShipmentSerializer
     filter_backends = [DjangoFilterBackend]
-    #filterset_fields = []
 
     def get_permissions(self):
         if self.action in ['list', 'create']:
